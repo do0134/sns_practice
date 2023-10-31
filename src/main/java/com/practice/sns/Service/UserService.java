@@ -1,5 +1,6 @@
 package com.practice.sns.Service;
 
+import com.practice.sns.exception.ErrorCode;
 import com.practice.sns.exception.SNSApplicationException;
 import com.practice.sns.model.User;
 import com.practice.sns.model.entity.UserEntity;
@@ -20,8 +21,12 @@ public class UserService {
      * join Implement
      */
     public User join(String userName, String password) {
-        Optional<UserEntity> userEntity = userEntityRepository.findByUserName(userName);
-        return new User();
+        userEntityRepository.findByUserName(userName).ifPresent(it -> {
+            throw new SNSApplicationException(ErrorCode.DUPLICATED_USER_NAME, String.format("%s is duplicated",userName));
+        });
+
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName,password));
+        return User.fromEntity(userEntity);
     }
 
     /**
@@ -29,10 +34,11 @@ public class UserService {
      * @return
      */
     public String login(String userName, String password) {
-       UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() -> new SNSApplicationException());
+       UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() -> new SNSApplicationException(ErrorCode.DUPLICATED_USER_NAME,String.format("%s is duplicated", userName)));
+
 
        if (!userEntity.getPassword().equals(password)) {
-           throw new SNSApplicationException();
+           throw new SNSApplicationException(ErrorCode.DUPLICATED_USER_NAME,String.format("%s is duplicated", userName));
        }
 
         return "Success";
