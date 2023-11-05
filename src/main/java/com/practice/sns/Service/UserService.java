@@ -6,6 +6,7 @@ import com.practice.sns.model.User;
 import com.practice.sns.model.entity.UserEntity;
 import com.practice.sns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
