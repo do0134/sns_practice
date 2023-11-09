@@ -6,8 +6,10 @@ import com.practice.sns.model.User;
 import com.practice.sns.model.entity.UserEntity;
 import com.practice.sns.repository.UserEntityRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -16,17 +18,18 @@ import java.util.Optional;
 public class UserService {
 
     private final UserEntityRepository userEntityRepository;
-
+    private final BCryptPasswordEncoder encoder;
 
     /**
      * join Implement
      */
+    @Transactional
     public User join(String userName, String password) {
         userEntityRepository.findByUserName(userName).ifPresent(it -> {
             throw new SNSApplicationException(ErrorCode.DUPLICATED_USER_NAME, String.format("%s is duplicated",userName));
         });
 
-        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName,password));
+        UserEntity userEntity = userEntityRepository.save(UserEntity.of(userName, encoder.encode(password)));
         return User.fromEntity(userEntity);
     }
 

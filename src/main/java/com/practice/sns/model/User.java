@@ -1,14 +1,20 @@
 package com.practice.sns.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.practice.sns.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
 public class User {
     private Long id;
     private String userName;

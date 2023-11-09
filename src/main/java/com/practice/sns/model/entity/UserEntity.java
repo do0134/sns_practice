@@ -2,6 +2,7 @@ package com.practice.sns.model.entity;
 
 import com.practice.sns.model.UserRole;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -16,6 +17,7 @@ import java.time.Instant;
 @Setter
 @SQLDelete(sql = "UPDATED \"user\" SET deleted_at = NOW() where id =?")
 @Where(clause = "deleted_at is Null")
+@NoArgsConstructor
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
