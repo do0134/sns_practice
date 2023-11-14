@@ -2,8 +2,10 @@ package com.practice.sns.controller;
 
 import com.practice.sns.Service.UserService;
 import com.practice.sns.controller.request.UserJoinRequest;
+import com.practice.sns.controller.request.UserLoginRequest;
 import com.practice.sns.controller.response.Response;
 import com.practice.sns.controller.response.UserJoinResponse;
+import com.practice.sns.controller.response.UserLoginResponse;
 import com.practice.sns.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +30,9 @@ public class UserController {
         return Response.success(UserJoinResponse.fromUser(user));
     }
 
-    @PostMapping
-    public void login() {
-        userService.login("","");
+    @PostMapping("/login")
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
+        String token = userService.login(request.getName(), request.getPassword());
+        return Response.success(new UserLoginResponse(token));
     }
 }
