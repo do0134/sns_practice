@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    hikari:
+      maximum-pool-size: 4
+    url: jdbc:postgresql://localhost:5432/snsPractice
+    username: postgres
+    password: zoatoszl1;
+    driver-class-name: org.postgresql.Driver
+
+jwt:
+  secret-key: fast_campus.sns-applications-2023.secret-key
+  token.expired-time-ms: 259200000

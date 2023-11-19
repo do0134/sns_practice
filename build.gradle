@@ -42,11 +42,11 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
-node {
-	nodeModulesDir = file("$projectDir/front-end")
-	version = '18.3.0'
-	download = true
-}
+//node {
+//	nodeModulesDir = file("$projectDir/front-end")
+//	version = '18.3.0'
+//	download = true
+//}
 
 task npmBuild(type: NpmTask) {
 	args = ['run', "build"]
@@ -57,12 +57,12 @@ task copyFrontEnd(type: Copy) {
 	into 'build/resources/main/static/.'
 }
 
-task cleanFrontEnd(type: Delete) {
-	delete "$projectDir/front-end/static", "$projectDir/front-end/node_modules"
-}
+//task cleanFrontEnd(type: Delete) {
+//	delete "$projectDir/front-end/static", "$projectDir/front-end/node_modules"
+//}
 
 //npmBuild.dependsOn npmInstall
-//copyFrontEnd.dependsOn npmBuild
-//compileJava.dependsOn copyFrontEnd
-//
+copyFrontEnd.dependsOn npmBuild
+compileJava.dependsOn copyFrontEnd
+
 //clean.dependsOn cleanFrontEnd

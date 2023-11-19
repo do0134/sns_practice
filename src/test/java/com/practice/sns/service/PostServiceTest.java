@@ -59,4 +59,6 @@ public class PostServiceTest {
         Assertions.assertEquals(ErrorCode.USER_NOT_FOUND, e.getErrorCode());
 
     }
+
+
 }
