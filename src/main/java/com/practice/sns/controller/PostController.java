@@ -1,8 +1,10 @@
 package com.practice.sns.controller;
 
 import com.practice.sns.Service.PostService;
+import com.practice.sns.controller.request.PostCommentRequest;
 import com.practice.sns.controller.request.PostCreateRequest;
 import com.practice.sns.controller.request.PostModifyRequest;
+import com.practice.sns.controller.response.CommentResponse;
 import com.practice.sns.controller.response.PostResponse;
 import com.practice.sns.controller.response.Response;
 import com.practice.sns.model.Post;
@@ -45,5 +47,27 @@ public class PostController {
     @GetMapping("/my")
     public Response<Page<PostResponse>> myList(Pageable pageable, Authentication authentication) {
         return Response.success(postService.myList(authentication.getName(),pageable).map(PostResponse::fromPost));
+    }
+
+    @PostMapping("/{postId}/likes")
+    public Response<Void> like(@PathVariable Long postId, Authentication authentication) {
+        postService.like(postId,authentication.getName());
+        return Response.success();
+    }
+
+    @GetMapping("/{postId}/likes")
+    public Response<Long> likeCount(@PathVariable Long postId, Authentication authentication) {
+        return Response.success(postService.likeCount(postId));
+    }
+
+    @PostMapping("/{postId}/comments")
+    public Response<Void> comment(@PathVariable Long postId, @RequestBody PostCommentRequest request, Authentication authentication) {
+        postService.comment(postId,authentication.getName(), request.getComment());
+        return Response.success();
+    }
+
+    @GetMapping("/{postId}/comments")
+    public Response<Page<CommentResponse>> commentList(@PathVariable Long postId, Authentication authentication, Pageable pageable) {
+        return Response.success(postService.getComments(postId, pageable).map(CommentResponse::fromComment));
     }
 }
