@@ -1,6 +1,7 @@
 package com.practice.sns.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.practice.sns.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
@@ -42,31 +43,37 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.getUserRole().toString()));
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return this.userName;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return this.deletedAt == null;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return this.deletedAt == null;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return this.deletedAt == null;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return this.deletedAt == null;
     }

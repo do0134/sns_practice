@@ -3,6 +3,7 @@ package com.practice.sns.service;
 import com.practice.sns.Service.PostService;
 import com.practice.sns.exception.ErrorCode;
 import com.practice.sns.exception.SNSApplicationException;
+import com.practice.sns.model.User;
 import com.practice.sns.model.entity.PostEntity;
 import com.practice.sns.model.entity.UserEntity;
 import com.practice.sns.repository.PostEntityRepository;

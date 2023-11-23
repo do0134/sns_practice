@@ -6,6 +6,7 @@ import com.practice.sns.model.Alarm;
 import com.practice.sns.model.User;
 import com.practice.sns.model.entity.UserEntity;
 import com.practice.sns.repository.AlarmEntityRepository;
+import com.practice.sns.repository.UserCacheRepository;
 import com.practice.sns.repository.UserEntityRepository;
 import com.practice.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserEntityRepository userEntityRepository;
     private final BCryptPasswordEncoder encoder;
     private final AlarmEntityRepository alarmEntityRepository;
+    private final UserCacheRepository userCacheRepository;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -33,15 +35,18 @@ public class UserService {
     @Value("${jwt.token.expired-time-ms}")
     private Long expiredTimeMs;
 
-    private UserEntity getUserOrException(String userName) {
-        return userEntityRepository.findByUserName(userName).orElseThrow(() ->
-                new SNSApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", userName))
-        );
-    }
+//    private User getUserOrException(String userName) {
+//        return userCacheRepository.getUser(userName).orElseGet(() ->
+//                userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(() ->
+//                        new SNSApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", userName))
+//                ));
+//    }
 
     public User loadUserByUserName(String userName) {
-        return userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(() ->
-                new SNSApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", userName)));
+        System.out.println(userName+ "111111111111111111111111111");
+        return userCacheRepository.getUser(userName).orElseGet(() ->
+                userEntityRepository.findByUserName(userName).map(User::fromEntity).orElseThrow(() ->
+                        new SNSApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s is not founded", userName))));
     }
 
     /**
@@ -62,9 +67,10 @@ public class UserService {
      * @return
      */
     public String login(String userName, String password) {
-       UserEntity userEntity = userEntityRepository.findByUserName(userName).orElseThrow(() -> new SNSApplicationException(ErrorCode.USER_NOT_FOUND,String.format("%s not founded", userName)));
+       User user = loadUserByUserName(userName);
+        userCacheRepository.setUser(user);
 
-       if (!encoder.matches(password, userEntity.getPassword())) {
+       if (!encoder.matches(password, user.getPassword())) {
            throw new SNSApplicationException(ErrorCode.INVALID_PASSWORD);
        }
 

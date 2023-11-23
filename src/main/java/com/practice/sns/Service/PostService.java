@@ -26,6 +26,7 @@ public class PostService {
     private final LikeEntityRepository likeEntityRepository;
     private final CommentEntityRepository commentEntityRepository;
     private final AlarmEntityRepository alarmEntityRepository;
+    private final AlarmService alarmService;
 
     private PostEntity getPostOrException(Long postId) {
         return postEntityRepository.findById(postId).orElseThrow(() ->
@@ -71,7 +72,8 @@ public class PostService {
             throw new SNSApplicationException(ErrorCode.INVALID_PERMISSION, String.format("%s has no perssion with %s", name, postId)
             );
         }
-
+        likeEntityRepository.deleteAllByPost(post);
+        commentEntityRepository.deleteAllByPost(post);
         postEntityRepository.delete(post);
     }
 
@@ -96,7 +98,8 @@ public class PostService {
 
         likeEntityRepository.save(LikeEntity.of(post,user));
 
-        alarmEntityRepository.save(AlarmEntity.of(post.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(user.getId(),post.getId())));
+        AlarmEntity alarmEntity = alarmEntityRepository.save(AlarmEntity.of(post.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(user.getId(),post.getId())));
+        alarmService.send(alarmEntity.getId(),post.getUser().getId());
     }
 
     @Transactional
@@ -114,7 +117,8 @@ public class PostService {
         UserEntity user = getUserOrException(userName);
         commentEntityRepository.save(CommentEntity.of(post,user,comment));
 
-        alarmEntityRepository.save(AlarmEntity.of(post.getUser(), AlarmType.NEW_COMMNET_ON_POST, new AlarmArgs(user.getId(),post.getId())));
+        AlarmEntity alarmEntity = alarmEntityRepository.save(AlarmEntity.of(post.getUser(), AlarmType.NEW_COMMNET_ON_POST, new AlarmArgs(user.getId(),post.getId())));
+        alarmService.send(alarmEntity.getId(),post.getUser().getId());
     }
 
     public Page<Comment> getComments(Long postId, Pageable pageable) {
